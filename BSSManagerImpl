@@ -1,30 +1,25 @@
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BSSManagerImpl extends UnicastRemoteObject implements BSSManager {
-    private Queue<String> messageQueue;
-    private Map<Integer, int[]> vectorClocks;
+    private List<Process> processes;
 
-    public BSSManagerImpl() throws RemoteException {
-        messageQueue = new LinkedList<>();
-        vectorClocks = new HashMap<>();
+    protected BSSManagerImpl() throws RemoteException {
+        processes = new ArrayList<>();
+    }
+
+    public void registerProcess(Process process) throws RemoteException {
+        processes.add(process);
     }
 
     @Override
-    public void sendMessage(int processId, String message, int[] vectorClock) throws RemoteException {
-        System.out.println("BSS Manager received message from process " + processId);
-        vectorClocks.put(processId, vectorClock);
-        messageQueue.add("Message from process " + processId + ": " + message);
-        deliverMessages();
-    }
-
-    private void deliverMessages() {
-        while (!messageQueue.isEmpty()) {
-            System.out.println(messageQueue.poll());
+    public void sendMessage(int senderId, String message, int[] vectorClock) throws RemoteException {
+        for (Process process : processes) {
+            if (process != null) {
+                process.deliverMessage(senderId, message, vectorClock);
+            }
         }
     }
 }
