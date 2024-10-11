@@ -1,0 +1,8 @@
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+
+public interface Process extends Remote {
+    void sendMessage(String message) throws RemoteException;
+    void deliverMessage(String message) throws RemoteException;
+    int[] getVectorClock() throws RemoteException;
+}
