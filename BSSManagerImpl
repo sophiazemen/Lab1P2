@@ -4,22 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BSSManagerImpl extends UnicastRemoteObject implements BSSManager {
-    private List<Process> processes;
+    private List<Process> processList;
 
-    protected BSSManagerImpl() throws RemoteException {
-        processes = new ArrayList<>();
-    }
-
-    public void registerProcess(Process process) throws RemoteException {
-        processes.add(process);
+    public BSSManagerImpl() throws RemoteException {
+        processList = new ArrayList<>();
     }
 
     @Override
     public void sendMessage(int senderId, String message, int[] vectorClock) throws RemoteException {
-        for (Process process : processes) {
-            if (process != null) {
-                process.deliverMessage(senderId, message, vectorClock);
-            }
+        System.out.println("Process " + senderId + " is sending message: " + message);
+
+        // Deliver the message to all registered processes
+        for (Process process : processList) {
+            process.deliverMessage(senderId, message, vectorClock);
         }
+    }
+
+    @Override
+    public void registerProcess(Process process) throws RemoteException {
+        processList.add(process);  // Registering the process
+        System.out.println("Process registered.");
     }
 }
