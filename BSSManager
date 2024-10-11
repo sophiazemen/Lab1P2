@@ -1,0 +1,6 @@
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+
+public interface BSSManager extends Remote {
+    void sendMessage(int processId, String message, int[] vectorClock) throws RemoteException;
+}
