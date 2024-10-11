@@ -2,35 +2,31 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 
-public class ProcessImpl extends UnicastRemoteObject implements ProcessRMI {
-    private int processID;
+public class ProcessImpl extends UnicastRemoteObject implements Process {
     private int[] vectorClock;
-    private int totalProcesses;
+    private int processId;
+    private BSSManager bssManager;
 
-    public ProcessImpl(int processID, int totalProcesses) throws RemoteException {
-        this.processID = processID;
-        this.totalProcesses = totalProcesses;
-        this.vectorClock = new int[totalProcesses];  // Initialize the vector clock
+    public ProcessImpl(int processId, int numProcesses, BSSManager bssManager) throws RemoteException {
+        this.processId = processId;
+        this.bssManager = bssManager;
+        vectorClock = new int[numProcesses];
+        Arrays.fill(vectorClock, 0);
     }
 
-    // To receive a message and ensure causal ordering
     @Override
-    public void sendMessage(int[] incomingClock, String message, int senderID) throws RemoteException {
-        System.out.println("Process " + senderID + " sent: " + message);
-
-        // Update the local vector clock
-        for (int i = 0; i < totalProcesses; i++) {
-            vectorClock[i] = Math.max(vectorClock[i], incomingClock[i]);
-        }
-        vectorClock[processID]++;
-
-        System.out.println("Updated vector clock: " + Arrays.toString(vectorClock));
+    public void sendMessage(String message) throws RemoteException {
+        vectorClock[processId]++;
+        bssManager.sendMessage(processId, message, vectorClock);
     }
 
-    // Simulate sending a message to another process
-    public void sendEvent(String message, ProcessRMI receiver) throws RemoteException {
-        vectorClock[processID]++;  // Increment local clock before sending
-        System.out.println("Process " + processID + " sending: " + message + " with vector clock: " + Arrays.toString(vectorClock));
-        receiver.sendMessage(vectorClock, message, processID);
+    @Override
+    public void deliverMessage(String message) throws RemoteException {
+        System.out.println("Process " + processId + " delivered message: " + message);
+    }
+
+    @Override
+    public int[] getVectorClock() throws RemoteException {
+        return vectorClock;
     }
 }
