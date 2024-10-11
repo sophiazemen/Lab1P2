@@ -3,6 +3,6 @@ import java.rmi.RemoteException;
 
 public interface Process extends Remote {
     void sendMessage(String message) throws RemoteException;
-    void deliverMessage(String message) throws RemoteException;
+    void deliverMessage(int senderId, String message, int[] vectorClock) throws RemoteException;
     int[] getVectorClock() throws RemoteException;
 }
