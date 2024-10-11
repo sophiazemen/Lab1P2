@@ -14,8 +14,7 @@ public class Main {
 
             // Create and bind Process instances (example for 3 processes)
             for (int i = 0; i < 3; i++) {
-                int additionalParameter = 0; // Define the additional parameter value
-                Process process = new ProcessImpl(i, additionalParameter, bssManager);
+                Process process = new ProcessImpl(i, 3, bssManager); // Passing number of processes
                 registry.rebind("Process" + i, process);
                 System.out.println("Process " + i + " is bound to registry");
             }
