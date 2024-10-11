@@ -1,7 +1,7 @@
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-public class BSSMain {
+public class Main {
     public static void main(String[] args) {
         try {
             // Create the RMI registry
@@ -14,7 +14,8 @@ public class BSSMain {
 
             // Create and bind Process instances (example for 3 processes)
             for (int i = 0; i < 3; i++) {
-                Process process = new ProcessImpl(i, bssManager);
+                int additionalParameter = 0; // Define the additional parameter value
+                Process process = new ProcessImpl(i, additionalParameter, bssManager);
                 registry.rebind("Process" + i, process);
                 System.out.println("Process " + i + " is bound to registry");
             }
